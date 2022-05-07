@@ -1,0 +1,10 @@
+jobs:
+  run_python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+          architecture: 'x64'
+      - run: pip install docker-compose
+      - run: docker-compose run app sh -c "python manage.py test && flake8"
