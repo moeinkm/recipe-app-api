@@ -15,8 +15,8 @@ jobs:
           python-version: '3.9'
           architecture: 'x64'
 
-      - name: "install docker-compose"
-      - run: pip install docker-compose
+#      - name: "install docker-compose"
+#      - run: pip install docker-compose
 
 #      - name: "run and test app"
 #      - run: docker-compose run app sh -c "python manage.py test && flake8"
