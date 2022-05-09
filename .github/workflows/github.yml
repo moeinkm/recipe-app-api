@@ -3,12 +3,14 @@ name: test-action
 on:
   push
 
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+
 jobs:
   run_python:
     runs-on: ubuntu-latest
     steps:
-      - using: 'docker'
-      - image: 'Dockerfile'
       - uses: actions/checkout@v3
 
       - name: "Set up python 3.9"
