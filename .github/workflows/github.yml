@@ -3,10 +3,6 @@ name: test-action
 on:
   push
 
-runs:
-  using: 'docker'
-  image: 'Dockerfile'
-
 jobs:
   run_python:
     runs-on: ubuntu-latest
@@ -22,5 +18,5 @@ jobs:
       - name: "install docker-compose"
       - run: pip install docker-compose
 
-      - name: "run and test app"
-      - run: docker-compose run app sh -c "python manage.py test && flake8"
+#      - name: "run and test app"
+#      - run: docker-compose run app sh -c "python manage.py test && flake8"
