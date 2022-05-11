@@ -10,3 +10,5 @@ class UserAdmin(CaseUserAdmin):
 
 
 admin.site.register(models.User, UserAdmin)
+
+a = 2
