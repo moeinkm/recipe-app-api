@@ -1,5 +1,4 @@
 import time
-import logging
 
 from django.db import connections
 from django.db.utils import OperationalError
@@ -18,6 +17,5 @@ class Command(BaseCommand):
             except OperationalError:
                 self.stdout.write('Database unavailable, waiting 1 second...')
                 time.sleep(1)
-        # to test logging vs stdout
-        logging.log(msg='Database sag ast', level=logging.DEBUG)
+
         self.stdout.write(self.style.SUCCESS('Database available!'))
