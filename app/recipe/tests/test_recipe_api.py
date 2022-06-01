@@ -207,3 +207,4 @@ class PrivateRecipeApiTest(TestCase):
         self.assertIn(new_ingredient, ingredients)
         tags = recipe.tags.all()
         self.assertEqual(len(tags), 0)
+        self.assertEqual(recipe.user, self.user)
