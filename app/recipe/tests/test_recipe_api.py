@@ -6,9 +6,17 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from core.models import Recipe, Tag, Ingredient
+
 from recipe.serializers import RecipeSerializer, RecipeDetailSerializer
 
+
 RECIPE_URL = reverse('recipe:recipe-list')
+
+
+def image_upload_url(recipe_id):
+    """Return URL for recipe image upload"""
+    return reverse('recipe:recipe-upload-image', args=[recipe_id])
+    # where second recipe in address string come from
 
 
 def detail_url(recipe_id):
@@ -208,3 +216,25 @@ class PrivateRecipeApiTest(TestCase):
         tags = recipe.tags.all()
         self.assertEqual(len(tags), 0)
         self.assertEqual(recipe.user, self.user)
+
+
+class RecipeImageUploadTests(TestCase):
+
+    def setUp(self) -> None:
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            'sag@shotor.com',
+            'testpass123'
+        )
+        self.client.force_authenticate(self.user)
+        self.recipe = sample_recipe(user=self.user)
+
+    def tearDown(self) -> None:
+        self.recipe.image.delete()  # what does this delete ?
+
+    def test_upload_image_bad_request(self):
+        """Test uploading an invalid image"""
+        url = image_upload_url(self.recipe.id)
+        res = self.client.post(url, {'image': 'notImage'}, format='multipart')
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
