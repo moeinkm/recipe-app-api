@@ -1,8 +1,8 @@
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework import viewsets, mixins, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import action
-from rest_framework.response import Response
 
 from core.models import Tag, Ingredient, Recipe
 from recipe import serializers
@@ -51,7 +51,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """Return appropriate serializer class"""
         if self.action == 'retrieve':
             return serializers.RecipeDetailSerializer
-        elif self.action == 'upload-image':
+        elif self.action == 'upload_image':
             return serializers.RecipeImageSerializer
 
         return self.serializer_class
@@ -64,18 +64,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def upload_image(self, request, pk=None):
         """Upload an image to a recipe"""
         recipe = self.get_object()
-        serializers = self.get_serializer(
+        serializer = self.get_serializer(
             recipe,
             data=request.data
         )
 
-        if serializers.is_valid():
-            serializers.save()
+        if serializer.is_valid():
+            serializer.save()
             return Response(
-                serializers.data,
+                serializer.data,
                 status=status.HTTP_200_OK
             )
         return Response(
-            serializers.errors,
+            serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )

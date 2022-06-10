@@ -1,3 +1,8 @@
+import tempfile
+import os
+
+from PIL import Image
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -232,9 +237,74 @@ class RecipeImageUploadTests(TestCase):
     def tearDown(self) -> None:
         self.recipe.image.delete()  # what does this delete ?
 
+    def test_upload_image_to_recipe(self):
+        """Test uploading image to recipe"""
+        url = image_upload_url(self.recipe.id)
+        with tempfile.NamedTemporaryFile(suffix='.jpg') as ntf:
+            img = Image.new('RGB', (10, 10))
+            img.save(ntf, format='JPEG')
+            ntf.seek(0)
+            res = self.client.post(url, {'image': ntf}, format='multipart')
+
+        self.recipe.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn('image', res.data)
+        self.assertTrue(os.path.exists(self.recipe.image.path))
+
     def test_upload_image_bad_request(self):
         """Test uploading an invalid image"""
         url = image_upload_url(self.recipe.id)
         res = self.client.post(url, {'image': 'notImage'}, format='multipart')
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_filter_recipes_by_tags(self):
+        """Test returning recipe with specific tags"""
+        recipe1 = sample_recipe(user=self.user, title='Sabzi polo ba mahi')
+        recipe2 = sample_recipe(user=self.user, title='Makaroni with meat sauce')
+        tag1 = sample_tag(user=self.user, name='Seafood')
+        tag2 = sample_tag(user=self.user, name='Italian')
+        recipe1.tags.add(tag1)
+        recipe2.tags.add(tag2)
+
+        recipe3 = sample_recipe(user=self.user, title='Masghati')
+        tag3 = sample_tag(user=self.user, name='Dessert')
+        recipe3.tags.add(tag3)
+
+        res = self.client.get(
+            RECIPE_URL,
+            {'tags': f'{tag1.id},{tag2.id}'}
+        )
+        serializer1 = RecipeSerializer(recipe1)
+        serializer2 = RecipeSerializer(recipe2)
+        serializer3 = RecipeSerializer(recipe3)
+
+        self.assertIn(serializer1.data, res.data)
+        self.assertIn(serializer2.data, res.data)
+        self.assertNotIn(serializer3.data, res.data)
+
+    def test_filter_recipes_by_ingredient(self):
+        """Test returning recipe with specific ingredient"""
+        recipe1 = sample_recipe(user=self.user, title='Sabzi polo ba mahi')
+        recipe2 = sample_recipe(user=self.user, title='Makaroni with meat sauce')
+        ingredient1 = sample_ingredient(user=self.user, name='Salmon')
+        ingredient2 = sample_ingredient(user=self.user, name='Spaghetti')
+        recipe1.ingredient.add(ingredient1)
+        recipe2.ingredient.add(ingredient2)
+
+        recipe3 = sample_recipe(user=self.user, title='Masghati')
+        ingredient3 = sample_ingredient(user=self.user, name='Flour')
+        recipe3.ingredient.add(ingredient3)
+
+        res = self.client.get(
+            RECIPE_URL,
+            {'tags': f'{ingredient1.id},{ingredient2.id}'}
+        )
+
+        serializer1 = RecipeSerializer(recipe1)
+        serializer2 = RecipeSerializer(recipe2)
+        serializer3 = RecipeSerializer(recipe3)
+
+        self.assertIn(serializer1.data, res.data)
+        self.assertIn(serializer2.data, res.data)
+        self.assertNotIn(serializer3.data, res.data)
