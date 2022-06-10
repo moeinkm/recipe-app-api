@@ -260,8 +260,12 @@ class RecipeImageUploadTests(TestCase):
 
     def test_filter_recipes_by_tags(self):
         """Test returning recipe with specific tags"""
-        recipe1 = sample_recipe(user=self.user, title='Sabzi polo ba mahi')
-        recipe2 = sample_recipe(user=self.user, title='Makaroni with meat sauce')
+        recipe1 = sample_recipe(
+            user=self.user,
+            title='Sabzi polo ba mahi')
+        recipe2 = sample_recipe(
+            user=self.user,
+            title='Makaroni with meat sauce')
         tag1 = sample_tag(user=self.user, name='Seafood')
         tag2 = sample_tag(user=self.user, name='Italian')
         recipe1.tags.add(tag1)
@@ -285,8 +289,12 @@ class RecipeImageUploadTests(TestCase):
 
     def test_filter_recipes_by_ingredient(self):
         """Test returning recipe with specific ingredient"""
-        recipe1 = sample_recipe(user=self.user, title='Sabzi polo ba mahi')
-        recipe2 = sample_recipe(user=self.user, title='Makaroni with meat sauce')
+        recipe1 = sample_recipe(
+            user=self.user,
+            title='Sabzi polo ba mahi')
+        recipe2 = sample_recipe(
+            user=self.user,
+            title='Makaroni with meat sauce')
         ingredient1 = sample_ingredient(user=self.user, name='Salmon')
         ingredient2 = sample_ingredient(user=self.user, name='Spaghetti')
         recipe1.ingredients.add(ingredient1)
