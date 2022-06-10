@@ -289,16 +289,16 @@ class RecipeImageUploadTests(TestCase):
         recipe2 = sample_recipe(user=self.user, title='Makaroni with meat sauce')
         ingredient1 = sample_ingredient(user=self.user, name='Salmon')
         ingredient2 = sample_ingredient(user=self.user, name='Spaghetti')
-        recipe1.ingredient.add(ingredient1)
-        recipe2.ingredient.add(ingredient2)
+        recipe1.ingredients.add(ingredient1)
+        recipe2.ingredients.add(ingredient2)
 
         recipe3 = sample_recipe(user=self.user, title='Masghati')
         ingredient3 = sample_ingredient(user=self.user, name='Flour')
-        recipe3.ingredient.add(ingredient3)
+        recipe3.ingredients.add(ingredient3)
 
         res = self.client.get(
             RECIPE_URL,
-            {'tags': f'{ingredient1.id},{ingredient2.id}'}
+            {'ingredients': f'{ingredient1.id},{ingredient2.id}'}
         )
 
         serializer1 = RecipeSerializer(recipe1)
